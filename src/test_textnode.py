@@ -1,6 +1,7 @@
 import unittest
 from textnode import TextNode, TextType
 from node_converter import text_node_to_html_node
+from split_nodes_delimiter import split_nodes_delimiter 
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -63,7 +64,26 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(html_node.tag, "a")
         self.assertEqual(html_node.value, "This is a link")
         self.assertEqual(html_node.props["href"], "https://www.google.com")
+    
+    def test_split_node_delimeter(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(new_nodes,[ TextNode("This is text with a ", TextType.TEXT), TextNode("code block", TextType.CODE), TextNode(" word", TextType.TEXT), ])
 
+
+    def test_split_node_delimeter_empty(self):
+        node = TextNode("`code block`", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(new_nodes,[ TextNode("", TextType.TEXT), TextNode("code block", TextType.CODE), TextNode("", TextType.TEXT), ])
+    
+    def test_unmatched_delimiter(self):
+        old_nodes = [TextNode("This is **mismatched", TextType.TEXT)]
+
+        with self.assertRaises(Exception) as context:
+            split_nodes_delimiter(old_nodes, "**", TextType.BOLD)
+        
+        # Check that the exception message is specific
+        self.assertIn("Unmatched delimiter", str(context.exception))
 
 if __name__ == "__main__":
     unittest.main()
