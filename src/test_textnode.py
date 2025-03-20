@@ -2,6 +2,7 @@ import unittest
 from textnode import TextNode, TextType
 from node_converter import text_node_to_html_node
 from split_nodes_delimiter import split_nodes_delimiter 
+from extract_md import *
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -84,6 +85,26 @@ class TestTextNode(unittest.TestCase):
         
         # Check that the exception message is specific
         self.assertIn("Unmatched delimiter", str(context.exception))
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_links(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        matches = extract_markdown_links(text)
+        self.assertListEqual([("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")],matches)
+
+    def test_extract_markdown_images_empty(self):
+        matches = extract_markdown_images("")
+        self.assertListEqual([],matches)
+
+
+    def test_extract_markdown_links_empty(self):
+        matches = extract_markdown_links("")
+        self.assertListEqual([],matches)
 
 if __name__ == "__main__":
     unittest.main()
