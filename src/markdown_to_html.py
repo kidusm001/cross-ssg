@@ -44,7 +44,10 @@ def extract_heading_level(block):
 
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
-    html_nodes = list(filter(lambda node: node.value,(map(lambda node: text_node_to_html_node(node),text_nodes))))
+    html_nodes = list(map(text_node_to_html_node, text_nodes))
+    if not html_nodes:
+        empty_text = TextNode("", TextType.TEXT)
+        html_nodes = [text_node_to_html_node(empty_text)]
     return html_nodes
 
 def code_to_children(code):
