@@ -19,7 +19,8 @@ def main():
         shutil.rmtree(public_dir)
     
     cp_content(static_dir, public_dir)
-    generate_page(os.path.join(content_dir, "index.md"), os.path.join(base_dir, "template.html"), os.path.join(public_dir, "index.html"))
+    # generate_page(os.path.join(content_dir, "index.md"), os.path.join(base_dir, "template.html"), os.path.join(public_dir, "index.html"))
+    generate_pages_recursive(content_dir,  os.path.join(base_dir, "template.html"), public_dir)
 
 def cp_content(source, destination):
     # For the initial call, clear the destination directory
@@ -68,7 +69,18 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path,"w") as file:
         file.write(temp_with_content)
 
-    
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    for item in os.listdir(dir_path_content):
+        source_item = os.path.join(dir_path_content, item)
+        dest_item = os.path.join(dest_dir_path, item)
+
+        if os.path.isfile(source_item):
+            generate_page(source_item, template_path, os.path.join(dest_dir_path, "index.html"))
+        
+        else:
+            os.mkdir(dest_item)
+            generate_pages_recursive(source_item, template_path, dest_item)
+
 
 
 
