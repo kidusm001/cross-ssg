@@ -79,7 +79,7 @@ cross-ssg/
 1.  **Clone the repository:**
 
     ```sh
-    git clone https://github.com/yourusername/cross-ssg.git
+    git clone https://github.com/kidusm001/cross-ssg.git
     cd cross-ssg
     ```
 
